@@ -1,0 +1,63 @@
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script>
+
+	function Places (name, latitude, longitude, array){
+		this.name = name;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		array.push(this);
+	}
+
+
+	function buttonMaker(place){
+	var button = document.createElement('button');
+	button.id = place.name;
+	var buttonText = document.createTextNode(place.name);
+	button.appendChild(buttonText);
+	sidebar.appendChild(button);
+	}
+
+	function makeButtons(array){
+		for(var i = 0; i < array.length; i++){
+			buttonMaker(array[i]);
+		}
+	}
+
+	var container = document.createElement('div');
+	container.id = 'container';
+	container.style.width = "100%";
+	container.style.height = "2000px";
+
+	var sidebar = document.createElement('div');
+	sidebar.id = 'sidebar';
+	sidebar.style.width = "75px";
+	sidebar.style.backgroundColor = "#00ff48";
+	sidebar.style.height = "100%";
+	sidebar.style.float = "left";
+	sidebar.style.margin = "0";
+	sidebar.style.padding = "0";
+	sidebar.style.float = "left";
+	container.appendChild(sidebar);
+
+	var places = [];
+
+	var leblon = new Places('leblon', '-22.987649', '-43.221640', places);
+	var ipanema = new Places('ipanema', '-22.986450', '-43.205995', places);
+	var copa = new Places('copa', '-22.9689662', '-43.1844084', places);
+	var sanca = new Places('sanca', '-22.999373', '-43.264027', places);
+	var urca = new Places('urca', '-22.955430', '-43.164800', places);
+	var barra = new Places('barra', '-23.012240', '-43.323770', places);
+	var reserva = new Places('reserva', '-23.012849', '-43.388988', places);
+	var joa = new Places('joa', '-23.014354', '-43.290364', places);
+	var recreio = new Places('recreio', '-23.028383', '-43.464918', places);
+	var macumba	 = new Places('macumba', '-23.033151', '-43.205995', places);
+	var prainha = new Places('prainha', '-23.040962', '-43.505379', places);
+	var grumari = new Places('grumari', '-23.048466', '-43.524417', places);
+	var guaratiba = new Places('guaratiba', '-23.067656', '-43.567932', places);
+
+	$(document).ready(function(){
+		makeButtons(places);
+		document.body.appendChild(container);
+	});
+</script>
