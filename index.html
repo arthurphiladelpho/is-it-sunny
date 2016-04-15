@@ -13,6 +13,7 @@
 	function buttonMaker(place){
 	var button = document.createElement('button');
 	button.id = place.name;
+	button.value = place.name;
 	var buttonText = document.createTextNode(place.name);
 	button.appendChild(buttonText);
 	sidebar.appendChild(button);
@@ -40,8 +41,10 @@
 	sidebar.style.float = "left";
 	container.appendChild(sidebar);
 
-	var places = [];
+	var resultsContainer = document.createElement("div");
+	resultsContainer.id = "resultsContainer";
 
+	var places = [];
 	var leblon = new Places('leblon', '-22.987649', '-43.221640', places);
 	var ipanema = new Places('ipanema', '-22.986450', '-43.205995', places);
 	var copa = new Places('copa', '-22.9689662', '-43.1844084', places);
@@ -58,6 +61,41 @@
 
 	$(document).ready(function(){
 		makeButtons(places);
+
+		$("body").on('click', 'button', function(){
+		resultsContainer.innerHTML = " ";
+		var APIKEY = "e964d33cde30c141523b46f7f27e0007";
+		var LATITUDE;
+		var LONGITUDE;
+		var btnValue = $(this).text();
+		for(var i = 0; i < places.length; i++){
+			if(btnValue == places[i]["name"]){
+				LATITUDE = places[i]["latitude"];
+				LONGITUDE = places[i]["longitude"];
+			}	
+		}
+		
+		var weatherAPI = "https://api.forecast.io/forecast/" + APIKEY + "/" + LATITUDE + "," + LONGITUDE + "?callback=?";
+		function displayWeather(data){
+		resultsContainer.innerHTML += "<ul>";
+		resultsContainer.innerHTML += "<li>" + data.currently.summary + "</l1>";
+		resultsContainer.innerHTML += "<li>" + data.currently.temperature + "</l1>";
+		resultsContainer.innerHTML += "<li>" + data.currently.windSpeed + "</l1>";
+		resultsContainer.innerHTML += "<li>" + data.currently.precipProbability + "</l1>";
+		resultsContainer.innerHTML += "<li>" + data.currently.humidity + "</l1>";
+		resultsContainer.innerHTML += "<li>" + data.currently.pressure + "</l1>";
+
+		resultsContainer.innerHTML += "</ul>";
+		}	
+
+		$.getJSON(weatherAPI, /*options,*/ displayWeather);	
+			
+		container.appendChild(resultsContainer);
+		});			
+		
+		
+		container.appendChild(resultsContainer);
 		document.body.appendChild(container);
 	});
 </script>
+
