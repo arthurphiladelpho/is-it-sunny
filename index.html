@@ -1,101 +1,146 @@
-<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-<script>
 
-	function Places (name, latitude, longitude, array){
+ <!DOCTYPE html>
+<html>
+  <head>
+    <title>Is It Sunny?</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+	<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+	<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+	<script>
+	  
+	  function Places (name, latitude, longitude, array){
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		array.push(this);
-	}
+	  }
 
 
-	function buttonMaker(place){
-	var button = document.createElement('button');
-	button.id = place.name;
-	button.value = place.name;
-	var buttonText = document.createTextNode(place.name);
-	button.appendChild(buttonText);
-	sidebar.appendChild(button);
-	}
+	  function buttonMaker(place){
+		var button = document.createElement('button');
+		button.id = place.name;
+		button.value = place.name;
+		var buttonText = document.createTextNode(place.name);
+		button.appendChild(buttonText);
+		sidebar.appendChild(button);
+	  }
 
-	function makeButtons(array){
+	  function makeButtons(array){
 		for(var i = 0; i < array.length; i++){
 			buttonMaker(array[i]);
 		}
-	}
+	  }
 
-	var container = document.createElement('div');
-	container.id = 'container';
-	container.style.width = "100%";
-	container.style.height = "2000px";
+      var container = document.createElement('div');
+	  container.id = 'container';
+	  container.style.width = "100%";
+	  container.style.height = "2000px";
 
-	var sidebar = document.createElement('div');
-	sidebar.id = 'sidebar';
-	sidebar.style.width = "75px";
-	sidebar.style.backgroundColor = "#00ff48";
-	sidebar.style.height = "100%";
-	sidebar.style.float = "left";
-	sidebar.style.margin = "0";
-	sidebar.style.padding = "0";
-	sidebar.style.float = "left";
-	container.appendChild(sidebar);
+	  var sidebar = document.createElement('div');
+	  sidebar.id = 'sidebar';
+	  sidebar.style.width = "75px";
+	  sidebar.style.backgroundColor = "#00ff48";
+	  sidebar.style.height = "100%";
+	  sidebar.style.float = "left";
+	  sidebar.style.margin = "0";
+	  sidebar.style.padding = "0";
+	  sidebar.style.float = "left";
+	  container.appendChild(sidebar);
 
-	var resultsContainer = document.createElement("div");
-	resultsContainer.id = "resultsContainer";
+	  var resultsContainer = document.createElement("div");
+	  resultsContainer.id = "resultsContainer";
 
-	var places = [];
-	var leblon = new Places('leblon', '-22.987649', '-43.221640', places);
-	var ipanema = new Places('ipanema', '-22.986450', '-43.205995', places);
-	var copa = new Places('copa', '-22.9689662', '-43.1844084', places);
-	var sanca = new Places('sanca', '-22.999373', '-43.264027', places);
-	var urca = new Places('urca', '-22.955430', '-43.164800', places);
-	var barra = new Places('barra', '-23.012240', '-43.323770', places);
-	var reserva = new Places('reserva', '-23.012849', '-43.388988', places);
-	var joa = new Places('joa', '-23.014354', '-43.290364', places);
-	var recreio = new Places('recreio', '-23.028383', '-43.464918', places);
-	var macumba	 = new Places('macumba', '-23.033151', '-43.205995', places);
-	var prainha = new Places('prainha', '-23.040962', '-43.505379', places);
-	var grumari = new Places('grumari', '-23.048466', '-43.524417', places);
-	var guaratiba = new Places('guaratiba', '-23.067656', '-43.567932', places);
+	  var places = [];
+	  var leblon = new Places('leblon', '-22.987649', '-43.221640', places);
+	  var ipanema = new Places('ipanema', '-22.986450', '-43.205995', places);
+	  var copa = new Places('copa', '-22.9689662', '-43.1844084', places);
+	  var sanca = new Places('sanca', '-22.999373', '-43.264027', places);
+	  var urca = new Places('urca', '-22.955430', '-43.164800', places);
+	  var barra = new Places('barra', '-23.012240', '-43.323770', places);
+	  var reserva = new Places('reserva', '-23.012849', '-43.388988', places);
+	  var joa = new Places('joa', '-23.014354', '-43.290364', places);
+	  var recreio = new Places('recreio', '-23.028383', '-43.464918', places);
+	  var macumba = new Places('macumba', '-23.033151', '-43.205995', places);
+	  var prainha = new Places('prainha', '-23.040962', '-43.505379', places);
+	  var grumari = new Places('grumari', '-23.048466', '-43.524417', places);
+	  var guaratiba = new Places('guaratiba', '-23.067656', '-43.567932', places);
 
-	$(document).ready(function(){
+	  $(document).ready(function(){
+			
 		makeButtons(places);
 
 		$("body").on('click', 'button', function(){
-		resultsContainer.innerHTML = " ";
-		var APIKEY = "e964d33cde30c141523b46f7f27e0007";
-		var LATITUDE;
-		var LONGITUDE;
-		var btnValue = $(this).text();
-		for(var i = 0; i < places.length; i++){
-			if(btnValue == places[i]["name"]){
-				LATITUDE = places[i]["latitude"];
-				LONGITUDE = places[i]["longitude"];
-			}	
-		}
-		
-		var weatherAPI = "https://api.forecast.io/forecast/" + APIKEY + "/" + LATITUDE + "," + LONGITUDE + "?callback=?";
-		function displayWeather(data){
-		resultsContainer.innerHTML += "<ul>";
-		resultsContainer.innerHTML += "<li>" + data.currently.summary + "</l1>";
-		resultsContainer.innerHTML += "<li>" + data.currently.temperature + "</l1>";
-		resultsContainer.innerHTML += "<li>" + data.currently.windSpeed + "</l1>";
-		resultsContainer.innerHTML += "<li>" + data.currently.precipProbability + "</l1>";
-		resultsContainer.innerHTML += "<li>" + data.currently.humidity + "</l1>";
-		resultsContainer.innerHTML += "<li>" + data.currently.pressure + "</l1>";
-
-		resultsContainer.innerHTML += "</ul>";
-		}	
-
-		$.getJSON(weatherAPI, /*options,*/ displayWeather);	
+			resultsContainer.innerHTML = " ";
+			var APIKEY = "e964d33cde30c141523b46f7f27e0007";
+			var LATITUDE;
+			var LONGITUDE;
+			var btnValue = $(this).text();
+			for(var i = 0; i < places.length; i++){
+				if(btnValue == places[i]["name"]){
+					LATITUDE = places[i]["latitude"];
+					LONGITUDE = places[i]["longitude"];
+					resultsContainer.innerHTML += "<h5>" + places[i]["name"] + "</h5>"
+				}	
+			}
 			
-		container.appendChild(resultsContainer);
-		});			
-		
-		
-		container.appendChild(resultsContainer);
-		document.body.appendChild(container);
-	});
-</script>
+			var weatherAPI = "https://api.forecast.io/forecast/" + APIKEY + "/" + LATITUDE + "," + LONGITUDE + "?callback=?";
+			function displayWeather(data){
+				resultsContainer.innerHTML += "<ul>";
+				resultsContainer.innerHTML += "<li>" + data.currently.summary + "</l1>";
+				resultsContainer.innerHTML += "<li>" + data.currently.temperature + "</l1>";
+				resultsContainer.innerHTML += "<li>" + data.currently.windSpeed + "</l1>";
+				resultsContainer.innerHTML += "<li>" + data.currently.precipProbability + "</l1>";
+				resultsContainer.innerHTML += "<li>" + data.currently.humidity + "</l1>";
+				resultsContainer.innerHTML += "<li>" + data.currently.pressure + "</l1>";
+				resultsContainer.innerHTML += "</ul>";
+			}	
 
+			$.getJSON(weatherAPI, displayWeather);	
+				
+			container.appendChild(resultsContainer);
+			});			
+			
+			
+			container.appendChild(resultsContainer);
+			document.body.appendChild(container);
+	  });
+	</script>
+	<style>
+	 	//STYLES PROVIDED BY GOOGLE MAPS API
+	      html, body {
+	        height: 100%;
+	        margin: 0;
+	        padding: 0;
+	      }
+	      #map {
+	        height: 500px;
+	        width: 50%;
+	        float: right;
+	      }
+	</style>
+	  </head>
+	  	<body>
+	    <div id="map"></div>
+	    <script>
+	      var map;
+	      function initMap() {
+	        var myLatLng = {lat: -22.986450, lng: -43.205995};
+	        map = new google.maps.Map(document.getElementById('map'), {
+	          center: {lat:-22.82, lng: -43.205995},
+	          zoom: 10
+	        });
+	        var ipanemaMarker = new google.maps.Marker({
+	        position: myLatLng,
+	        map: map,
+	        title: 'Google Map'
+	        });
+
+	        container.appendChild(document.getElementById('map'));
+	      }
+	      
+	    </script>
+	    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCz3T2t3rfTwN_esxfWWqWQK9DNBOIU7oQ&callback=initMap"
+	    async defer></script>
+		</body>
+<html>
