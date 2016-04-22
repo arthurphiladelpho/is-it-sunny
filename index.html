@@ -13,6 +13,9 @@
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.spot = {};
+		this.spot.lat = latitude;
+		this.spot.lng = longitude;
 		array.push(this);
 	  }
 
@@ -32,6 +35,7 @@
 		}
 	  }
 
+
       var container = document.createElement('div');
 	  container.id = 'container';
 	  container.style.width = "100%";
@@ -50,21 +54,27 @@
 
 	  var resultsContainer = document.createElement("div");
 	  resultsContainer.id = "resultsContainer";
+	  resultsContainer.style.float = "left";
+
+	  var futureResults = document.createElement("div");
+	  futureResults.id = "futureResults";
+	  futureResults.style.float = "left";
+	  futureResults.style.marginLeft = "8px";
 
 	  var places = [];
-	  var leblon = new Places('leblon', '-22.987649', '-43.221640', places);
-	  var ipanema = new Places('ipanema', '-22.986450', '-43.205995', places);
-	  var copa = new Places('copa', '-22.9689662', '-43.1844084', places);
-	  var sanca = new Places('sanca', '-22.999373', '-43.264027', places);
-	  var urca = new Places('urca', '-22.955430', '-43.164800', places);
-	  var barra = new Places('barra', '-23.012240', '-43.323770', places);
-	  var reserva = new Places('reserva', '-23.012849', '-43.388988', places);
-	  var joa = new Places('joa', '-23.014354', '-43.290364', places);
-	  var recreio = new Places('recreio', '-23.028383', '-43.464918', places);
-	  var macumba = new Places('macumba', '-23.033151', '-43.205995', places);
-	  var prainha = new Places('prainha', '-23.040962', '-43.505379', places);
-	  var grumari = new Places('grumari', '-23.048466', '-43.524417', places);
-	  var guaratiba = new Places('guaratiba', '-23.067656', '-43.567932', places);
+	  var urca = new Places('Urca', -22.955430, -43.164800, places);
+	  var copa = new Places('Copa', -22.9689662, -43.1844084, places);
+	  var ipanema = new Places('Ipanema', -22.986450, -43.205995, places);
+	  var leblon = new Places('Leblon', -22.987649, -43.221640, places);
+	  var sanca = new Places('Sanca', -22.999373, -43.264027, places);
+	  var joatinga = new Places('Joatinga', -23.014354, -43.290364, places);
+	  var barra = new Places('Barra', -23.012240, -43.323770, places);
+	  var reserva = new Places('Reserva', -23.012849, -43.388988, places);
+	  var macumba = new Places('Macumba', -23.033037, -43.4862847, places);  
+	  var recreio = new Places('Recreio', -23.028383, -43.464918, places);
+	  var prainha = new Places('Prainha', -23.040962, -43.505379, places);
+	  var grumari = new Places('Grumari', -23.048466, -43.524417, places);
+	  var guaratiba = new Places('Guaratiba', -23.067656, -43.567932, places);
 
 	  $(document).ready(function(){
 			
@@ -80,13 +90,14 @@
 				if(btnValue == places[i]["name"]){
 					LATITUDE = places[i]["latitude"];
 					LONGITUDE = places[i]["longitude"];
-					resultsContainer.innerHTML += "<h5>" + places[i]["name"] + "</h5>"
+					resultsContainer.innerHTML += "<h5>" + places[i]["name"] + "</h5>";
 				}	
 			}
 			
 			var weatherAPI = "https://api.forecast.io/forecast/" + APIKEY + "/" + LATITUDE + "," + LONGITUDE + "?callback=?";
 			function displayWeather(data){
 				resultsContainer.innerHTML += "<ul>";
+				resultsContainer.innerHTML += "<li>" + data.currently.icon + "</l1>";		
 				resultsContainer.innerHTML += "<li>" + data.currently.summary + "</l1>";
 				resultsContainer.innerHTML += "<li>" + data.currently.temperature + "</l1>";
 				resultsContainer.innerHTML += "<li>" + data.currently.windSpeed + "</l1>";
@@ -99,12 +110,58 @@
 			$.getJSON(weatherAPI, displayWeather);	
 				
 			container.appendChild(resultsContainer);
-			});			
-			
-			
-			container.appendChild(resultsContainer);
+
+
+			});
+
+	
+		// WHEN A BUTTON IS CLICKED THE FOLLOWING FUNCTION ALSO HAPPENS
+		$("body").on('click', 'button', function(){
+			futureResults.innerHTML = " ";
+				var APIKEY = "e964d33cde30c141523b46f7f27e0007";
+				var LATITUDE;
+				var LONGITUDE;
+				var btnValue = $(this).text();
+				for(var i = 0; i < places.length; i++){
+					if(btnValue == places[i]["name"]){
+						LATITUDE = places[i]["latitude"];
+						LONGITUDE = places[i]["longitude"];
+						futureResults.innerHTML += "<h5>" + places[i]["name"]+ " in 24 hours" + "</h5>";
+					}	
+				}
+				var timeNow = Date.now();
+				timeNow /= 1000;
+				timeNow -= (86400 / 24) * 3;
+				var timeTomorrow = timeNow + 86400;
+				var TIME = Math.round(timeTomorrow);
+				// for(var i = 0; i <= 10; i++){
+				// timeTomorrow = timeNow + 86400;
+				// TIME = Math.round(timeTomorrow);
+				// }
+				
+
+				// THIS IS THE FORECAST.IO API URL
+				var weatherAPI = "https://api.forecast.io/forecast/" + APIKEY + "/" + LATITUDE + "," + LONGITUDE + "," + TIME + "?callback=?";
+
+				function displayWeather(data){
+					futureResults.innerHTML += "<ul>";
+					futureResults.innerHTML += "<li>" + data.currently.icon + "</l1>";		
+					futureResults.innerHTML += "<li>" + data.currently.summary + "</l1>";
+					futureResults.innerHTML += "<li>" + data.currently.temperature + "</l1>";
+					futureResults.innerHTML += "<li>" + data.currently.windSpeed + "</l1>";
+					futureResults.innerHTML += "<li>" + data.currently.precipProbability + "</l1>";
+					futureResults.innerHTML += "<li>" + data.currently.humidity + "</l1>";
+					futureResults.innerHTML += "<li>" + data.currently.pressure + "</l1>";
+					futureResults.innerHTML += "</ul>";
+						}	
+
+				$.getJSON(weatherAPI, displayWeather);	
+					
+				container.appendChild(futureResults);
+			});
+
 			document.body.appendChild(container);
-	  });
+		  });
 	</script>
 	<style>
 	 	//STYLES PROVIDED BY GOOGLE MAPS API
@@ -113,34 +170,54 @@
 	        margin: 0;
 	        padding: 0;
 	      }
+	      button {
+	      	margin: 3px 3px 3px 3px;
+	      }
 	      #map {
-	        height: 500px;
-	        width: 50%;
-	        float: right;
+	        height: 250px;
+	       	margin: 5px;
+	        width: 60%;
+	        float: left;
 	      }
 	</style>
 	  </head>
 	  	<body>
-	    <div id="map"></div>
-	    <script>
-	      var map;
-	      function initMap() {
-	        var myLatLng = {lat: -22.986450, lng: -43.205995};
-	        map = new google.maps.Map(document.getElementById('map'), {
-	          center: {lat:-22.82, lng: -43.205995},
-	          zoom: 10
-	        });
-	        var ipanemaMarker = new google.maps.Marker({
-	        position: myLatLng,
-	        map: map,
-	        title: 'Google Map'
-	        });
-
-	        container.appendChild(document.getElementById('map'));
-	      }
-	      
-	    </script>
-	    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCz3T2t3rfTwN_esxfWWqWQK9DNBOIU7oQ&callback=initMap"
-	    async defer></script>
+		    <div id="map"></div>
+		    <script>
+		      var map;
+		      function initMap() {
+		        map = new google.maps.Map(document.getElementById('map'), {
+		          center: {lat:-22.98, lng: -43.26},
+		          zoom: 12
+		        }); 
+		      
+		    
+		    for(var i = 0; i < places.length; i++){
+		        	var name = places[i]["name"];
+		        	var label = name.charAt(0);
+		        	var marker = new google.maps.Marker({
+					    position: places[i]["spot"],
+					    map: map,
+					    title: name,
+					    label: label,
+					    animation: google.maps.Animation.DROP
+			  		});
+			  		marker.addListener('click', function() {
+   					map = marker.getMap();
+   					map.setZoom(16);
+    				map.setCenter(this.getPosition());
+  					});
+  					marker.addListener('dblclick', function() {
+   					map = marker.getMap();
+   					map.setZoom(12);
+    				map.setCenter(this.getPosition());
+  					});
+		        }
+		    }
+		        container.appendChild(document.getElementById('map'));
+		      
+		    </script>
+		    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCz3T2t3rfTwN_esxfWWqWQK9DNBOIU7oQ&callback=initMap"
+		    async defer></script>
 		</body>
 <html>
