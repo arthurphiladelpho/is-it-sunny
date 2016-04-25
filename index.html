@@ -9,6 +9,7 @@
 	<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 	<script>
 	  
+
 	  function Places (name, latitude, longitude, array){
 		this.name = name;
 		this.latitude = latitude;
@@ -35,6 +36,7 @@
 		}
 	  }
 
+	  var markers = [];
 
       var container = document.createElement('div');
 	  container.id = 'container';
@@ -92,6 +94,7 @@
 					LONGITUDE = places[i]["longitude"];
 					resultsContainer.innerHTML += "<h5>" + places[i]["name"] + "</h5>";
 				}	
+				
 			}
 			
 			var weatherAPI = "https://api.forecast.io/forecast/" + APIKEY + "/" + LATITUDE + "," + LONGITUDE + "?callback=?";
@@ -114,7 +117,24 @@
 
 			});
 
-	
+		function loopFutureResults(APIKEY, LATITUDE, LONGITUDE, TIME){
+			var weatherAPI = "https://api.forecast.io/forecast/" + APIKEY + "/" + LATITUDE + "," + LONGITUDE + "," + TIME + "?callback=?";
+		
+			function displayWeather(data){
+					futureResults += "<ul>";
+					futureResults += "<li>" + data.currently.icon + "</l1>";		
+					futureResults += "<li>" + data.currently.summary + "</l1>";
+					futureResults += "<li>" + data.currently.temperature + "</l1>";
+					futureResults += "<li>" + data.currently.windSpeed + "</l1>";
+					futureResults += "<li>" + data.currently.precipProbability + "</l1>";
+					futureResults += "<li>" + data.currently.humidity + "</l1>";
+					futureResults += "<li>" + data.currently.pressure + "</l1>";
+					futureResults += "</ul>";
+					}
+			$.getJSON(weatherAPI, displayWeather);	
+
+			container.appendChild(futureResults);
+			}
 		// WHEN A BUTTON IS CLICKED THE FOLLOWING FUNCTION ALSO HAPPENS
 		$("body").on('click', 'button', function(){
 			futureResults.innerHTML = " ";
@@ -126,7 +146,7 @@
 					if(btnValue == places[i]["name"]){
 						LATITUDE = places[i]["latitude"];
 						LONGITUDE = places[i]["longitude"];
-						futureResults.innerHTML += "<h5>" + places[i]["name"]+ " in 24 hours" + "</h5>";
+						futureResults.innerHTML += "<h5>" + places[i]["name"]+ " in " + 12 * (i+1) + " hours" + "</h5>";
 					}	
 				}
 				var timeNow = Date.now();
@@ -134,34 +154,19 @@
 				timeNow -= (86400 / 24) * 3;
 				var timeTomorrow = timeNow + 86400;
 				var TIME = Math.round(timeTomorrow);
-				// for(var i = 0; i <= 10; i++){
-				// timeTomorrow = timeNow + 86400;
-				// TIME = Math.round(timeTomorrow);
-				// }
-				
-
-				// THIS IS THE FORECAST.IO API URL
-				var weatherAPI = "https://api.forecast.io/forecast/" + APIKEY + "/" + LATITUDE + "," + LONGITUDE + "," + TIME + "?callback=?";
-
-				function displayWeather(data){
-					futureResults.innerHTML += "<ul>";
-					futureResults.innerHTML += "<li>" + data.currently.icon + "</l1>";		
-					futureResults.innerHTML += "<li>" + data.currently.summary + "</l1>";
-					futureResults.innerHTML += "<li>" + data.currently.temperature + "</l1>";
-					futureResults.innerHTML += "<li>" + data.currently.windSpeed + "</l1>";
-					futureResults.innerHTML += "<li>" + data.currently.precipProbability + "</l1>";
-					futureResults.innerHTML += "<li>" + data.currently.humidity + "</l1>";
-					futureResults.innerHTML += "<li>" + data.currently.pressure + "</l1>";
-					futureResults.innerHTML += "</ul>";
-						}	
-
-				$.getJSON(weatherAPI, displayWeather);	
-					
+			
+				for (var i = 1; i <= 10; i++){
+					var placesFutureResults = loopFutureResults(APIKEY, LATITUDE, LONGITUDE, TIME);
+					$("#places"+i).html(placesFutureResults);
+					TIME = TIME + 43200;	
+				}
+						
 				container.appendChild(futureResults);
 			});
 
 			document.body.appendChild(container);
 		  });
+		
 	</script>
 	<style>
 	 	//STYLES PROVIDED BY GOOGLE MAPS API
@@ -195,10 +200,11 @@
 		    for(var i = 0; i < places.length; i++){
 		        	var name = places[i]["name"];
 		        	var label = name.charAt(0);
-		        	var marker = new google.maps.Marker({
+		        	 var marker = new google.maps.Marker({
 					    position: places[i]["spot"],
 					    map: map,
 					    title: name,
+					    id : label,
 					    label: label,
 					    animation: google.maps.Animation.DROP
 			  		});
@@ -210,10 +216,13 @@
   					marker.addListener('dblclick', function() {
    					map = marker.getMap();
    					map.setZoom(12);
-    				map.setCenter(this.getPosition());
+    				map.setCenter({lat:-22.98, lng: -43.26});
   					});
+  					markers.push([marker, places[i]["name"]]);
 		        }
 		    }
+
+
 		        container.appendChild(document.getElementById('map'));
 		      
 		    </script>
